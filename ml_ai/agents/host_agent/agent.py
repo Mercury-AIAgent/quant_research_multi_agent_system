@@ -7,9 +7,9 @@ from google.genai import types
 host_agent = Agent(
     name="host_agent",
     model="gemini-2.5-flash-lite", #"openai/gpt-4o", #LiteLlm("openrouter/meta-llama/llama-3-70b-instruct"), # "openai/gpt-4o"
-    description="Coordinates travel planning by calling flight, stay, and activity agents.",
-    instruction="You are the host agent responsible for orchestrating trip planning tasks. "
-                "You call external agents to gather flights, stays, and activities, then return a final result."
+    description="Coordinates quant assignment by calling datasaver, news, and coder agents.",
+    instruction="You are the host agent responsible for orchestrating quant tasks. "
+                "You call external agents to gather data and save, related news, and generate code, then return a news bullet points and results on monthly basis."
 )
 session_service = InMemorySessionService()
 runner = Runner(
@@ -28,7 +28,7 @@ async def execute(request):
         session_id=SESSION_ID
     )
     prompt = (
-        f"Plan a trip to {request['destination']} from {request['start_date']} to {request['end_date']} "
+        f"Plan a trip to {request['yearupto']} from {request['startyear']} to {request['end_date']} "
         f"within a total budget of {request['budget']}. Call the flights, stays, and activities agents for results."
     )
     message = types.Content(role="user", parts=[types.Part(text=prompt)])
