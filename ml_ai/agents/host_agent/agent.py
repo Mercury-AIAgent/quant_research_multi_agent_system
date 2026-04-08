@@ -28,8 +28,11 @@ async def execute(request):
         session_id=SESSION_ID
     )
     prompt = (
-        f"Plan a trip to {request['yearupto']} from {request['startyear']} to {request['end_date']} "
-        f"within a total budget of {request['budget']}. Call the flights, stays, and activities agents for results."
+        f"Fetch data of Nifty50 starting from {request['nifty50startyear']} upto {request['nifty50endyear']} via datasaver agent and save file in current folder."
+        f"then call news agent to check monthly nifty50 behavior of all months between {request['nifty50startyear']} and {request['nifty50endyear']} via news agent."
+        f"then call coder agent to generate code for comparing monthly performance of nifty50 in all years starting from {request['nifty50startyear']} upto {request['nifty50endyear']}"
+        f"nifty50 data is saved in current folder. two parameters of function should be nifty50startyear and nifty50end year and return type should be dictionary where keys will be years and values will be list of monthly returns of nifty50. print the code as per coder agent instructions."
+        f"Call the datasaver, news, and coder agents for results."
     )
     message = types.Content(role="user", parts=[types.Part(text=prompt)])
     async for event in runner.run_async(user_id=USER_ID, session_id=SESSION_ID, new_message=message):
