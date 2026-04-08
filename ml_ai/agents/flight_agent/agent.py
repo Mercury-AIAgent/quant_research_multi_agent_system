@@ -10,12 +10,12 @@ import time
 
 async def execute(request):
     flight_agent = Agent(
-        name="flight_agent",
+        name="datasaver_agent",
         model="gemini-2.5-flash-lite", #"openai/gpt-4o", #LiteLlm("openrouter/meta-llama/llama-3-70b-instruct"),
-        description="Suggests flights options from source to a destination.",
+        description="Download nifty50 data for given years.",
         instruction=(
-            "Given a destination,travel dates, and budget, suggest 1-2 realistic flight options. "
-            "Include airline name, flight number, departure/arrival times, and price. Ensure flights fit within budget. "
+            "Given nifty50startyear and nifty50endyear, Fetch data of Nifty50 starting nifty50startyear upto nifty50endyear and save file in current folder. "
+            "Include type of file and location where you are saving. "
             "Respond in plain English. Keep it concise and well-formatted."
         )
     )
@@ -34,17 +34,15 @@ async def execute(request):
         session_service=session_service
     )
     prompt = (
-        f"User is flying to {request['destination']} from {request['start_date']} to {request['end_date']}, "
-        f"with a budget of {request['budget']}. suggest 1-2 realistic flight options. "
-        f"Respond in JSON format using the key 'flight' with a list of a flight objects."
-        f"Include airline name, flight number, departure/arrival times, and price and mention if it's direct or has layovers. "
+        f"User wants to download data of nifty50 from year {request['nifty50startyear']} upto year {request['nifty50endyear']}, "
+        f"Include type of file and location where you are saving.  "
         f"Respond in plain English. Keep it concise and well-formatted."
     )
     message = types.Content(role="user", parts=[types.Part(text=prompt)])
     time.sleep(5)  # Simulate some processing delay
     async for event in runner.run_async(user_id=USER_ID, session_id=SESSION_ID, new_message=message):
         if event.is_final_response():
-            return {"flights": event.content.parts[0].text}
+            return {"type_and_location": event.content.parts[0].text}
             # response_text = event.content.parts[0].text
             # try:
             #     parsed = json.loads(response_text)
